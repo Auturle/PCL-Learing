@@ -1,0 +1,17 @@
+
+*.vcxproj
+*.filters
+*.user
+*.db
+*.opendb
+.vs/PCL-Learing/v15/.suo
+*.ipch
+*.tlog
+*.obj
+*.log
+*.idb
+*.exe
+*.pdb
+*.ilk
+*.8X64r
+*.sln
