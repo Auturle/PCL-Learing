@@ -16,8 +16,8 @@ using namespace std;
 
 int main(int argc, char*argv[])
 {
-	ioTest(argc, argv);
-	//example2();
+	//ioTest(argc, argv);
+	example2();
 	//example1(argc, argv);
 	//typedef struct tagPOINT_3D
 	//{
