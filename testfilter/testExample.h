@@ -1,5 +1,8 @@
 #pragma once
 #ifndef TESTEXAMPLE_H
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkRenderingOpenGL);
+VTK_MODULE_INIT(vtkInteractionStyle);
 
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
@@ -11,7 +14,8 @@ typedef pcl::PointXYZI PointT;	//exmaple1 use
 
 int user_data;	//	example2 use
 
-//example1
+//example1	
+//书中例程1，但是在设置搜索方法的时候报参数类型错误，后续再解决
 
 int example1(int argc, char*argv[])
 {
@@ -42,7 +46,8 @@ int example1(int argc, char*argv[])
 }
 
 
-//example2
+//example2 
+//安装测试例程
 
 void viewerOneOff(pcl::visualization::PCLVisualizer& viewer)
 {
@@ -98,8 +103,10 @@ void example2()
 
 }
 
-//example3
-int ioTest(int argc, char **argv)
+//example3 
+//从pcd文件读取数据
+
+int ioFromPcd(int argc, char **argv)
 {
 	//创建一个PointCloud<pcl::PointXYZ> boost共享指针并进行实例化
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
@@ -121,6 +128,63 @@ int ioTest(int argc, char **argv)
 	return 0;
 }
 
+//example4
+//从txt文件读取数据，并显示出来
+void ioFromTxt()
+{
+	typedef struct tagPOINT_3D
+	{
+		double x;  //mm world coordinate x  
+		double y;  //mm world coordinate y  
+		double z;  //mm world coordinate z  
+		double r;
+	}POINT_WORLD;
+
+
+	//加载txt数据  
+	int number_Txt;
+	FILE *fp_txt;
+	tagPOINT_3D TxtPoint;
+	vector<tagPOINT_3D> m_vTxtPoints;
+	fp_txt = fopen("testData.txt", "r");
+	if (fp_txt)
+	{
+		while (fscanf(fp_txt, "%lf %lf %lf", &TxtPoint.x, &TxtPoint.y, &TxtPoint.z) != EOF)
+		{
+			m_vTxtPoints.push_back(TxtPoint);
+		}
+	}
+	else
+		cout << "txt数据加载失败！" << endl;
+	number_Txt = m_vTxtPoints.size();
+	//pcl::PointCloud<pcl::PointXYZ> cloud;
+	//这里使用“PointXYZ”是因为我后面给的点云信息是包含的三维坐标，同时还有点云信息包含的rgb颜色信息的或者还有包含rgba颜色和强度信息。
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+	// Fill in the cloud data  
+	cloud->width = number_Txt;
+	cloud->height = 1;
+	cloud->is_dense = false;
+	cloud->points.resize(cloud->width * cloud->height);
+	for (size_t i = 0; i < cloud->points.size(); ++i)
+	{
+		cloud->points[i].x = m_vTxtPoints[i].x;
+		cloud->points[i].y = m_vTxtPoints[i].y;
+		cloud->points[i].z = m_vTxtPoints[i].z;
+	}
+	pcl::io::savePCDFileASCII("txt2pcd_bunny1.pcd", *cloud);
+	std::cerr << "Saved " << cloud->points.size() << " data points to txt2pcd.pcd." << std::endl;
+
+	//for (size_t i = 0; i < cloud.points.size(); ++i)
+	//  std::cerr << "    " << cloud.points[i].x << " " << cloud.points[i].y << " " << cloud.points[i].z << std::endl;
+
+	//PCL Visualizer
+	// Viewer  
+	pcl::visualization::PCLVisualizer viewer("Cloud Viewer");
+	viewer.addPointCloud(cloud);
+	viewer.setBackgroundColor(0, 0, 0);
+
+	viewer.spin();
+}
 
 #endif // !TESTEXAMPLE_H
 

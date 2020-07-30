@@ -9,3 +9,11 @@
  根据https://github.com/mariusmuja/flann/issues/386
  他们说要将将503行的typedef unsigned long long pop_t; 移出if end;
  我将503行的typedef unsigned long long pop_t; 移动至475行，报错消失
+ 
+ 2.VTK编译出现no override found for 'vtkPolyDataMapper'
+	这种问题是因为没有用cmake，而是直接用控制台结合VTK的库函数进行开发的。
+	下面是其中一个解决方式：
+	#include "vtkAutoInit.h" 
+	VTK_MODULE_INIT(vtkRenderingOpenGL2); // VTK was built with vtkRenderingOpenGL2
+	VTK_MODULE_INIT(vtkInteractionStyle);
+
