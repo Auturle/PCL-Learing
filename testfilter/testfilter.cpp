@@ -3,20 +3,14 @@
 
 #include <pcl/visualization/cloud_viewer.h>
 #include <iostream>//标准C++库中的输入输出类相关头文件。
-#include <pcl/io/io.h>
-#include <pcl/io/pcd_io.h>//pcd 读写类相关的头文件。
-#include <pcl/io/ply_io.h>
-#include <pcl/point_types.h> //PCL中支持的点类型头文件。
-#include<fstream>  
-#include <string>  
-#include <vector> 
 #include "testExample.h"
 
 using namespace std;
 
 int main(int argc, char*argv[])
 {
-
+	//writeInPcd();
+	readFromPcd(argc, argv);
 	system("pause");
 	return 0;
 

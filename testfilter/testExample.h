@@ -3,7 +3,9 @@
 #include <vtkAutoInit.h>
 VTK_MODULE_INIT(vtkRenderingOpenGL);
 VTK_MODULE_INIT(vtkInteractionStyle);
-
+#include <vector>
+#include<fstream>  
+#include <string>  
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/kdtree/kdtree_flann.h>
@@ -106,13 +108,18 @@ void example2()
 //example3 
 //从pcd文件读取数据
 
-int ioFromPcd(int argc, char **argv)
+int readFromPcd(int argc, char **argv)
 {
 	//创建一个PointCloud<pcl::PointXYZ> boost共享指针并进行实例化
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 
 	//打开文件
-	if (pcl::io::loadPCDFile<pcl::PointXYZ>("test_pcd.pcd", *cloud) == -1)
+	//if (pcl::io::loadPCDFile<pcl::PointXYZ>("test_pcd.pcd", *cloud) == -1)
+	//{
+	//PCL:ERROR("could'n open file test_pcd.pcd\n");
+	//	return -1;
+	//}
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>("SaveTestBinary.pcd", *cloud) == -1)
 	{
 	PCL:ERROR("could'n open file test_pcd.pcd\n");
 		return -1;
@@ -130,7 +137,7 @@ int ioFromPcd(int argc, char **argv)
 
 //example4
 //从txt文件读取数据，并显示出来
-void ioFromTxt()
+void readFromTxt()
 {
 	typedef struct tagPOINT_3D
 	{
@@ -145,7 +152,7 @@ void ioFromTxt()
 	int number_Txt;
 	FILE *fp_txt;
 	tagPOINT_3D TxtPoint;
-	vector<tagPOINT_3D> m_vTxtPoints;
+	std::vector<tagPOINT_3D> m_vTxtPoints;
 	fp_txt = fopen("testData.txt", "r");
 	if (fp_txt)
 	{
@@ -186,5 +193,30 @@ void ioFromTxt()
 	viewer.spin();
 }
 
+
+//example 5
+//写数据进pcd数据文件
+void writeInPcd()
+{
+	//创建boost 共享指针
+	pcl::PointCloud<pcl::PointXYZ> cloud;
+	//设置点云大小
+	cloud.width = 50;
+	cloud.height = 1;	//无序点云
+	cloud.is_dense = false;	//true: if no point are invaild(e.g. hava NaN or inf values);
+	cloud.points.resize(cloud.height * cloud.width);
+	//随机生成点
+	for (size_t i = 0; i < cloud.points.size(); i++)
+	{
+		cloud.points[i].x = 1024 * rand() / (RAND_MAX + 1.0F);
+		cloud.points[i].y = 1024 * rand() / (RAND_MAX + 1.0F);
+		cloud.points[i].z = 1024 * rand() / (RAND_MAX + 1.0F);
+	}
+	pcl::io::savePCDFileASCII("SaveTestASCII.pcd", cloud);
+	pcl::io::savePCDFile("SaveTest.pcd", cloud);
+	pcl::io::savePCDFileBinary("SaveTestBinary.pcd", cloud);
+	for (size_t i = 0; i < cloud.points.size(); ++i)
+		std::cerr << "    " << cloud.points[i].x << " " << cloud.points[i].y << " " << cloud.points[i].z << std::endl;
+}
 #endif // !TESTEXAMPLE_H
 
